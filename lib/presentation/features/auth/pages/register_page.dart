@@ -24,14 +24,18 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => isLoading = false);
 
     if (success) {
+      if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration success!")),
       );
       Navigator.pop(context); // balik ke login
+      }
     } else {
+      if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration failed!")),
       );
+      }
     }
   }
 

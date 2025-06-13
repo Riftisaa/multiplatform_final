@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/todo_provider.dart';
 import 'presentation/features/auth/pages/login_page.dart';
+import 'presentation/features/todo/pages/todo_list_page.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,8 +14,11 @@ void main() async {
   );
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => TodoProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -25,8 +30,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Clean Arch Firebase',
-      home: LoginPage(),
+      title: 'Clean Arch Firebase Todo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          return authProvider.user != null 
+              ? const TodoListPage() 
+              : const LoginPage();
+        },
+      ),
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/todos': (context) => const TodoListPage(),
+      },
     );
   }
 }

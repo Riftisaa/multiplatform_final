@@ -19,19 +19,19 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     setState(() => isLoading = true);
 
-    final success = await Provider.of<AuthProvider>(context, listen: false)
-        .login(_emailController.text, _passwordController.text);
+    final provider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await provider.login(_emailController.text, _passwordController.text);
 
     setState(() => isLoading = false);
-
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login success!")),
-      );
+      if (mounted) Navigator.of(context).pushReplacementNamed('/todos');
     } else {
+      final errorMsg = provider.errorMessage ?? "Login failed!";
+      if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login failed!")),
+          SnackBar(content: Text(errorMsg)),
       );
+      }
     }
   }
 
